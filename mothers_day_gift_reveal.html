@@ -1,0 +1,420 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: transparent; }
+
+  #loading-screen {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #fff0f5 0%, #fff8f0 50%, #f5f0ff 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  #main-screen {
+    display: none;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #fff0f5 0%, #fff8f0 50%, #f5f0ff 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .petals {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .petal {
+    position: absolute;
+    width: 12px;
+    height: 18px;
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+    opacity: 0;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-30px) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .bear-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 1.5rem;
+  }
+
+  .bear-svg { width: 100%; height: 100%; }
+
+  @keyframes bearChew {
+    0%,100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.93); }
+  }
+
+  @keyframes reesesBounce {
+    0%,100% { transform: translateY(0px) rotate(-8deg); }
+    50% { transform: translateY(-6px) rotate(-8deg); }
+  }
+
+  @keyframes armLift {
+    0%,100% { transform: rotate(0deg); transform-origin: 60% 50%; }
+    50% { transform: rotate(-12deg); transform-origin: 60% 50%; }
+  }
+
+  .chewing { animation: bearChew 0.4s ease-in-out infinite; }
+  .reeses-bounce { animation: reesesBounce 0.4s ease-in-out infinite; }
+  .arm-anim { animation: armLift 0.4s ease-in-out infinite; }
+
+  .loading-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    color: #c2476a;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .loading-sub {
+    font-size: 13px;
+    color: #b07090;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dots span {
+    animation: blink 1.2s infinite;
+    font-size: 22px;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+  .enter-btn {
+    margin-top: 1.5rem;
+    background: #e05b84;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-family: 'Playfair Display', Georgia, serif;
+    cursor: pointer;
+    display: none;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .enter-btn:hover { background: #c94a70; transform: scale(1.04); }
+
+  /* MAIN SCREEN */
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: #c2476a;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+
+  .header .sub {
+    font-size: 14px;
+    color: #b07090;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .tulip-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 1rem 0 1.5rem;
+  }
+
+  .gift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 2rem;
+  }
+
+  .gift-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #f5d0de;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .gift-card:hover { transform: translateY(-3px); }
+
+  .gift-icon {
+    font-size: 36px;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .gift-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #c2476a;
+    margin-bottom: 4px;
+  }
+
+  .gift-desc {
+    font-size: 12px;
+    color: #b07090;
+    line-height: 1.5;
+  }
+
+  .reveal-card {
+    background: linear-gradient(135deg, #e05b84 0%, #c2476a 100%);
+    border-radius: 20px;
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reveal-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .reveal-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .reveal-amount {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 52px;
+    font-weight: 600;
+    margin: 0.3rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .reveal-label {
+    font-size: 13px;
+    opacity: 0.9;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+
+  .reveal-sub {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-top: 0.6rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .message-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #f5d0de;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .message-card p {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    color: #7a4060;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  .message-placeholder {
+    font-size: 13px;
+    color: #c0a0b0;
+    text-align: center;
+    font-style: italic;
+    padding: 0.5rem 0;
+  }
+
+  .from-line {
+    text-align: center;
+    font-size: 13px;
+    color: #b07090;
+    margin-top: 0.8rem;
+  }
+
+  .confetti-btn {
+    display: block;
+    width: 100%;
+    background: #e05b84;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Playfair Display', Georgia, serif;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .confetti-btn:hover { background: #c94a70; transform: scale(1.02); }
+</style>
+
+<div id="loading-screen">
+  <div class="petals" id="petals"></div>
+
+  <div class="bear-container">
+    <svg class="bear-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- ears -->
+      <circle cx="42" cy="52" r="20" fill="#f5c8d0"/>
+      <circle cx="118" cy="52" r="20" fill="#f5c8d0"/>
+      <circle cx="42" cy="52" r="12" fill="#f9dde3"/>
+      <circle cx="118" cy="52" r="12" fill="#f9dde3"/>
+      <!-- body -->
+      <ellipse cx="80" cy="115" rx="38" ry="34" fill="#f5c8d0"/>
+      <!-- head group that chews -->
+      <g class="chewing" style="transform-origin:80px 80px">
+        <circle cx="80" cy="80" r="40" fill="#f5c8d0"/>
+        <!-- face -->
+        <ellipse cx="80" cy="90" rx="18" ry="12" fill="#f9dde3"/>
+        <!-- eyes -->
+        <circle cx="68" cy="72" r="5" fill="#2c1a1a"/>
+        <circle cx="92" cy="72" r="5" fill="#2c1a1a"/>
+        <circle cx="70" cy="70" r="2" fill="white"/>
+        <circle cx="94" cy="70" r="2" fill="white"/>
+        <!-- nose -->
+        <ellipse cx="80" cy="84" rx="6" ry="4" fill="#2c1a1a"/>
+        <!-- mouth open while chewing -->
+        <path d="M73 91 Q80 98 87 91" fill="#c2476a" stroke="#a03055" stroke-width="0.5"/>
+        <!-- ribbon -->
+        <path d="M58 118 Q80 112 102 118" fill="none" stroke="#e05b84" stroke-width="5" stroke-linecap="round"/>
+      </g>
+      <!-- left arm lifting with reeses -->
+      <g class="arm-anim" style="transform-origin:55px 110px">
+        <ellipse cx="45" cy="118" rx="14" ry="10" fill="#f5c8d0" transform="rotate(-30 45 118)"/>
+        <!-- reeses in arm -->
+        <g class="reeses-bounce">
+          <rect x="14" y="98" width="38" height="20" rx="4" fill="#e05000"/>
+          <rect x="16" y="100" width="34" height="16" rx="3" fill="#f06010"/>
+          <text x="33" y="112" text-anchor="middle" font-size="7" font-weight="700" fill="#ffd700" font-family="Arial,sans-serif">REESE'S</text>
+        </g>
+      </g>
+      <!-- right arm -->
+      <ellipse cx="115" cy="118" rx="14" ry="10" fill="#f5c8d0" transform="rotate(30 115 118)"/>
+    </svg>
+  </div>
+
+  <p class="loading-text">Preparing something special<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+  <p class="loading-sub">For the best Mom</p>
+  <button class="enter-btn" id="enterBtn" onclick="showMain()">Open your surprise →</button>
+</div>
+
+<div id="main-screen">
+  <div class="petals" id="mainPetals"></div>
+  <div class="header">
+    <p class="sub">Happy Mother's Day</p>
+    <h1>We love you, Mom</h1>
+    <div class="tulip-row" id="tulips"></div>
+  </div>
+
+  <div class="message-card">
+    <p class="message-placeholder">✏️ Add your personal message here — open the HTML file and replace this text with what you want to say to Mom.</p>
+  </div>
+
+  <div class="gift-grid">
+    <div class="gift-card">
+      <span class="gift-icon">🧸</span>
+      <div class="gift-label">Teddy Bear</div>
+      <div class="gift-desc">A soft little friend to keep you company</div>
+    </div>
+    <div class="gift-card">
+      <span class="gift-icon">🍫</span>
+      <div class="gift-label">Reese's</div>
+      <div class="gift-desc">Your favorite — peanut butter perfection</div>
+    </div>
+    <div class="gift-card">
+      <span class="gift-icon">🌷</span>
+      <div class="gift-label">Tulips</div>
+      <div class="gift-desc">Pink and fresh, just like you</div>
+    </div>
+    <div class="gift-card">
+      <span class="gift-icon">🎈</span>
+      <div class="gift-label">Balloon</div>
+      <div class="gift-desc">To celebrate you today</div>
+    </div>
+  </div>
+
+  <div class="reveal-card">
+    <p class="reveal-label">And one more thing from all of us...</p>
+    <div class="reveal-amount">$150</div>
+    <p class="reveal-sub">Toward your Facebook Ads — because we believe in what you're building.</p>
+  </div>
+
+  <div class="from-line">With love from Max, Dad & your brother 💕</div>
+</div>
+
+<script>
+const petalColors = ['#f9a8c3','#f4c2d4','#fca5d8','#ff8fab','#ffb3c6','#ffd6e0'];
+
+function spawnPetals(containerId, count) {
+  const container = document.getElementById(containerId);
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = '-20px';
+    p.style.background = petalColors[Math.floor(Math.random() * petalColors.length)];
+    p.style.animationDuration = (3 + Math.random() * 4) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    p.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+    container.appendChild(p);
+  }
+}
+
+spawnPetals('petals', 18);
+
+function drawTulips() {
+  const colors = ['#e05b84','#ff6b6b','#ffa500','#c84b9e','#ff4d4d','#e91e8c'];
+  const container = document.getElementById('tulips');
+  colors.forEach(c => {
+    container.innerHTML += `<svg width="28" height="44" viewBox="0 0 28 44" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="14" cy="16" rx="10" ry="14" fill="${c}"/>
+      <ellipse cx="8" cy="18" rx="7" ry="12" fill="${c}" opacity="0.7"/>
+      <ellipse cx="20" cy="18" rx="7" ry="12" fill="${c}" opacity="0.7"/>
+      <line x1="14" y1="28" x2="14" y2="44" stroke="#5a9e5a" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
+  });
+}
+
+setTimeout(() => {
+  document.getElementById('enterBtn').style.display = 'inline-block';
+}, 2800);
+
+function showMain() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display = 'block';
+  spawnPetals('mainPetals', 24);
+  drawTulips();
+}
+</script>
